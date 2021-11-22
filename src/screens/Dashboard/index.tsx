@@ -1,18 +1,44 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { HighlightCard } from '../../components/HighlightCard';
 
-import { Container, Header } from './styles';
+import {
+  Container,
+  Header,
+  UserWrapper,
+  UserInfo,
+  Photo,
+  User,
+  UserGreeting,
+  UserName,
+  Icon,
+  HighlightCards,
+} from './styles';
 
 export const Dashboard: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Text>Imagem</Text>
-        <View>
-          <Text>Olá, </Text>
-          <Text>Hatus</Text>
-        </View>
+        <UserWrapper>
+          <UserInfo>
+            <Photo
+              source={{
+                uri: 'https://avatars.githubusercontent.com/u/167095',
+              }}
+            />
+            <User>
+              <UserGreeting>Olá, </UserGreeting>
+              <UserName>Hatus</UserName>
+            </User>
+          </UserInfo>
+          <Icon name="power" />
+        </UserWrapper>
       </Header>
+
+      <HighlightCards>
+        <HighlightCard />
+        <HighlightCard />
+        <HighlightCard />
+      </HighlightCards>
     </Container>
   );
 };
