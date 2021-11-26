@@ -100,7 +100,7 @@ export const Dashboard: React.FC = () => {
         <Title>Listagem</Title>
         <TransactionsList
           data={data}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
         />
       </Transactions>
