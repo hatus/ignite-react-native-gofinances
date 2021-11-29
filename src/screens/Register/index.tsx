@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '../../components/Button';
+import { Button } from '../../components/Forms/Button';
 import { Input } from '../../components/Forms/Input';
 
 import { Container, Header, Title, Form, Fields } from './styles';
