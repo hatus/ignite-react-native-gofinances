@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '../../components/Forms/Button';
 import { Input } from '../../components/Forms/Input';
 import { TransactionTypeButton } from '../../components/Forms/TransactionTypeButton';
+import { CategorySelect } from '../../components/Forms/CategorySelect';
 
 import {
   Container,
@@ -38,6 +39,7 @@ export const Register: React.FC = () => {
               onPress={() => handleTransactionTypeSelect('up')}
               isActive={transactionType === 'up'}
             />
+
             <TransactionTypeButton
               title="Outcome"
               type="down"
@@ -45,6 +47,8 @@ export const Register: React.FC = () => {
               isActive={transactionType === 'down'}
             />
           </TransactionsTypes>
+
+          <CategorySelect title="Categoria" />
         </Fields>
 
         <Button title="Enviar" />
