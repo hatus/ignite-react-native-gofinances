@@ -22,7 +22,7 @@ interface Category {
 }
 
 interface Props {
-  category: string;
+  category: Category;
   setCategory: (category: Category) => void; // para atualizar o estado
   closeSelectCategory: () => void; // fechar o modal
 }
@@ -32,16 +32,24 @@ export const CategorySelect: React.FC<Props> = ({
   closeSelectCategory,
   setCategory,
 }) => {
+  const handleCategorySelect = (category: Category) => {
+    setCategory(category);
+  };
+
   return (
     <Container>
       <Header>
         <Title>Categoria</Title>
       </Header>
+
       <FlatList
         data={categories}
         keyExtractor={item => item.key}
         renderItem={({ item }) => (
-          <Category>
+          <Category
+            onPress={() => handleCategorySelect(item)}
+            isActive={category.key === item.key}
+          >
             <Icon name={item.icon} />
             <Name>{item.name}</Name>
           </Category>
@@ -51,7 +59,7 @@ export const CategorySelect: React.FC<Props> = ({
       />
 
       <Footer>
-        <Button title="Selecionar" />
+        <Button title="Selecionar" onPress={closeSelectCategory} />
       </Footer>
     </Container>
   );
