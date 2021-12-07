@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { FlatList, FlatListProps } from 'react-native';
+import { BorderlessButton } from 'react-native-gesture-handler';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { Feather } from '@expo/vector-icons';
 import {
@@ -59,6 +60,8 @@ export const UserName = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bold};
 `;
 
+export const LogoutButton = styled(BorderlessButton)``;
+
 export const Icon = styled(Feather)`
   color: ${({ theme }) => theme.colors.secondary};
   font-size: ${RFValue(24)}px;
@@ -94,10 +97,3 @@ export const TransactionsList = styled(
   showsVerticalScrollIndicator: false,
   contentContainerStyle: { paddingBottom: getBottomSpace() },
 })``;
-
-/* export const TransactionsList = styled(FlatList).attrs({
-  showsVerticalScrollIndicator: false,
-  contentContainerStyle: {
-    paddingBottom: getBottomSpace() + 10,
-  },
-})`` as React.ComponentType as new <DataListProps>() => FlatList<DataListProps>; */
