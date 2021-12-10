@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Keyboard, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Button } from '../../components/Forms/Button';
 import { InputForm } from '../../components/Forms/InputForm';
@@ -39,6 +40,7 @@ export const Register: React.FC = () => {
     key: 'category',
     name: 'Categoria',
   });
+  const dataKey = '@gofinances:transactions';
 
   const {
     control,
@@ -47,21 +49,6 @@ export const Register: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  const handleRegister = (form: FormData) => {
-    if (!transactionType) return Alert.alert('Selecione o tipo da seleção');
-
-    if (category.key === 'category')
-      return Alert.alert('Selecione a categoria');
-
-    const data = {
-      name: form.name,
-      amount: form.amount,
-      transactionType,
-      category: category.key,
-    };
-    console.log(data);
-  };
 
   const handleTransactionTypeSelect = (type: 'up' | 'down') => {
     setTransactionType(type);
@@ -74,6 +61,34 @@ export const Register: React.FC = () => {
   const handleCloseSelectCategoryModal = () => {
     setCategoryModalOpen(false);
   };
+
+  const handleRegister = async (form: FormData) => {
+    if (!transactionType) return Alert.alert('Selecione o tipo da seleção');
+
+    if (category.key === 'category')
+      return Alert.alert('Selecione a categoria');
+
+    const data = {
+      name: form.name,
+      amount: form.amount,
+      transactionType,
+      category: category.key,
+    };
+
+    try {
+      await AsyncStorage.setItem(dataKey, JSON.stringify(data));
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Nao foi possível cadastrar.');
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      const data = await AsyncStorage.getItem(dataKey);
+      console.log(JSON.parse(data!));
+    })();
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
