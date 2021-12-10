@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Keyboard, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
-import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+
+import { useForm } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
 
 import { Button } from '../../components/Forms/Button';
 import { InputForm } from '../../components/Forms/InputForm';
@@ -41,10 +44,12 @@ export const Register: React.FC = () => {
     name: 'Categoria',
   });
   const dataKey = '@gofinances:transactions';
+  const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -69,11 +74,24 @@ export const Register: React.FC = () => {
       return Alert.alert('Selecione a categoria');
 
     const newTransaction = {
+      id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
       transactionType,
       category: category.key,
+      date: new Date(),
     };
+
+    // Resetando o estados dos campos
+    reset(); // Reseta os campos do react-hook-form
+    setTransactionType('');
+    setCategory({
+      key: 'category',
+      name: 'Categoria',
+    });
+
+    // navegar para a tela de listagem
+    navigation.navigate('Listagem');
 
     try {
       const data = await AsyncStorage.getItem(dataKey);
@@ -87,13 +105,6 @@ export const Register: React.FC = () => {
       Alert.alert('Nao foi possível cadastrar.');
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      const data = await AsyncStorage.getItem(dataKey);
-      console.log(JSON.parse(data!));
-    })();
-  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
