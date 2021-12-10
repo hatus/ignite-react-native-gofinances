@@ -68,7 +68,7 @@ export const Register: React.FC = () => {
     if (category.key === 'category')
       return Alert.alert('Selecione a categoria');
 
-    const data = {
+    const newTransaction = {
       name: form.name,
       amount: form.amount,
       transactionType,
@@ -76,7 +76,12 @@ export const Register: React.FC = () => {
     };
 
     try {
-      await AsyncStorage.setItem(dataKey, JSON.stringify(data));
+      const data = await AsyncStorage.getItem(dataKey);
+      const currentData = data ? JSON.parse(data) : [1];
+
+      const dataFormatted = [...currentData, newTransaction];
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
     } catch (error) {
       console.log(error);
       Alert.alert('Nao foi possível cadastrar.');
