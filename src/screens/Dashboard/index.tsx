@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { HighlightCard } from '../../components/HighlightCard';
 import {
@@ -32,38 +33,46 @@ export interface DataListProps extends TransactionCardProps {
 export const Dashboard: React.FC = () => {
   const [data, setData] = useState<DataListProps[]>([]);
 
+  const loadTransactions = async () => {
+    const response = await AsyncStorage.getItem(dataKey);
+    const transactions = response ? JSON.parse(response) : [];
+
+    const transactionsFormatted: DataListProps[] = transactions.map(
+      (item: DataListProps) => {
+        const amount = Number(item.amount).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+
+        const date = Intl.DateTimeFormat('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+        }).format(new Date(item.date));
+
+        return {
+          id: item.id,
+          name: item.name,
+          amount: amount.replace('R$', 'R$ '), // coloca espaço entre $ e valor
+          type: item.type,
+          category: item.category,
+          date,
+        };
+      },
+    );
+
+    setData(transactionsFormatted);
+  };
+
   useEffect(() => {
-    (async () => {
-      const response = await AsyncStorage.getItem(dataKey);
-      const transactions = response ? JSON.parse(response!) : [];
-
-      const transactionsFormatted: DataListProps[] = transactions.map(
-        (item: DataListProps) => {
-          const amount = Number(item.amount).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          });
-
-          const date = Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-          }).format(new Date(item.date));
-
-          return {
-            id: item.id,
-            name: item.name,
-            amount: amount.replace('R$', 'R$ '), // coloca espaço entre $ e valor
-            type: item.type,
-            category: item.category,
-            date,
-          };
-        },
-      );
-
-      setData(transactionsFormatted);
-    })();
+    loadTransactions();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTransactions();
+    }, []),
+  );
 
   return (
     <Container>
