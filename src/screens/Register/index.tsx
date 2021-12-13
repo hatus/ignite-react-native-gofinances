@@ -95,7 +95,7 @@ export const Register: React.FC = () => {
 
     try {
       const data = await AsyncStorage.getItem(dataKey);
-      const currentData = data ? JSON.parse(data) : [1];
+      const currentData = data ? JSON.parse(data) : [];
 
       const dataFormatted = [...currentData, newTransaction];
 
