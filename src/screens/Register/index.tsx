@@ -36,6 +36,8 @@ const schema = Yup.object().shape({
     .positive('O valor não pode ser negativo'),
 });
 
+export const dataKey = '@gofinances:transactions';
+
 export const Register: React.FC = () => {
   const [transactionType, setTransactionType] = useState('');
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
@@ -43,7 +45,6 @@ export const Register: React.FC = () => {
     key: 'category',
     name: 'Categoria',
   });
-  const dataKey = '@gofinances:transactions';
   const navigation = useNavigation();
 
   const {
