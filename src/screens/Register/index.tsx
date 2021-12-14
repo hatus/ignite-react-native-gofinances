@@ -91,9 +91,6 @@ export const Register: React.FC = () => {
       name: 'Categoria',
     });
 
-    // navegar para a tela de listagem
-    navigation.navigate('Listagem');
-
     try {
       const data = await AsyncStorage.getItem(dataKey);
       const currentData = data ? JSON.parse(data) : [];
@@ -105,6 +102,9 @@ export const Register: React.FC = () => {
       console.log(error);
       Alert.alert('Nao foi possível cadastrar.');
     }
+
+    // navegar para a tela de listagem
+    navigation.navigate('Listagem');
   };
 
   return (
