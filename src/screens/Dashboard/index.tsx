@@ -35,6 +35,7 @@ export interface DataListProps extends TransactionCardProps {
 
 interface HighlightProps {
   amount: string;
+  lastTransaction: string;
 }
 
 interface HighlightData {
@@ -52,9 +53,30 @@ export const Dashboard: React.FC = () => {
 
   const theme = useTheme();
 
+  // função para pegar a data da ultima transação
+  const getLastTransactionDate = (
+    collection: DataListProps[],
+    type: 'positive' | 'negative',
+  ) => {
+    const lastTransaction = Math.max.apply(
+      Math,
+      collection
+        .filter(transaction => transaction.type === type)
+        .map(transaction => new Date(transaction.date).getTime()),
+    );
+
+    // formata a data para pt-BR: dd de MMMMM
+    return Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+    }).format(new Date(lastTransaction));
+  };
+
   const loadTransactions = async () => {
+    // obtem o json do AS
     const response = await AsyncStorage.getItem(dataKey);
-    const transactions = response ? JSON.parse(response) : [];
+    // transforma json para Object
+    const transactions: DataListProps[] = response ? JSON.parse(response) : [];
 
     let entriesTotal = 0;
     let expensiveTotal = 0;
@@ -91,6 +113,16 @@ export const Dashboard: React.FC = () => {
 
     setTransactions(transactionsFormatted);
 
+    const lastTransactionEntries = getLastTransactionDate(
+      transactions,
+      'positive',
+    );
+    const lastTransactionExpensives = getLastTransactionDate(
+      transactions,
+      'negative',
+    );
+    const totalInterval = `01 a ${lastTransactionExpensives}`;
+
     const total = entriesTotal - expensiveTotal;
 
     setHighlightData({
@@ -99,18 +131,21 @@ export const Dashboard: React.FC = () => {
           currency: 'BRL',
           style: 'currency',
         }),
+        lastTransaction: `Última entrada dia ${lastTransactionEntries}`,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString('pt-BR', {
           currency: 'BRL',
           style: 'currency',
         }),
+        lastTransaction: `Última entrada dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
           currency: 'BRL',
           style: 'currency',
         }),
+        lastTransaction: totalInterval,
       },
     });
 
@@ -161,21 +196,21 @@ export const Dashboard: React.FC = () => {
               type="up"
               title="Entradas"
               amount={highlightData.entries.amount}
-              lastTransaction="Última entrada dia 13 de abril"
+              lastTransaction={highlightData.entries.lastTransaction}
             />
 
             <HighlightCard
               type="down"
               title="Saídas"
               amount={highlightData.expensives.amount}
-              lastTransaction="Última saída em 03 de abril"
+              lastTransaction={highlightData.entries.lastTransaction}
             />
 
             <HighlightCard
               type="total"
               title="Total"
               amount={highlightData.total.amount}
-              lastTransaction="01 à 16 de abril"
+              lastTransaction={highlightData.total.lastTransaction}
             />
           </HighlightCards>
 
