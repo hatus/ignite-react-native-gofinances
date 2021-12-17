@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VictoryPie } from 'victory-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -7,9 +8,12 @@ import { ptBR } from 'date-fns/locale';
 
 import { useTheme } from 'styled-components/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { HistoryCard } from '../../components/HistoryCard';
 import { dataKey } from '../Register';
+import { DataListProps } from '../Dashboard';
+import { categories } from '../../utils/categories';
 
 import {
   Container,
@@ -21,9 +25,8 @@ import {
   MonthSelectButton,
   MonthSelectIcon,
   Month,
+  LoadContainer,
 } from './styles';
-import { DataListProps } from '../Dashboard';
-import { categories } from '../../utils/categories';
 
 interface CategoryData {
   key: string;
@@ -39,6 +42,7 @@ export const Resume: React.FC = () => {
     [],
   );
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(false);
 
   const theme = useTheme();
 
@@ -51,6 +55,7 @@ export const Resume: React.FC = () => {
   };
 
   const loadData = async () => {
+    setIsLoading(true);
     const response = await AsyncStorage.getItem(dataKey);
     const transactions: DataListProps[] = response ? JSON.parse(response) : [];
 
@@ -101,11 +106,14 @@ export const Resume: React.FC = () => {
     });
 
     setTotalByCategories(totalByCategory);
+    setIsLoading(false);
   };
 
-  useEffect(() => {
-    loadData();
-  }, [selectedDate]);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [selectedDate]),
+  );
 
   return (
     <Container>
@@ -132,31 +140,39 @@ export const Resume: React.FC = () => {
           </MonthSelectButton>
         </MonthSelect>
 
-        <ChartContainer>
-          <VictoryPie
-            data={totalByCategories}
-            x="percent"
-            y="total"
-            colorScale={totalByCategories.map(category => category.color)}
-            style={{
-              labels: {
-                fontSize: RFValue(18),
-                fontWeight: 'bold',
-                fill: theme.colors.shape,
-              },
-            }}
-            labelRadius={50}
-          />
-        </ChartContainer>
+        {isLoading ? (
+          <LoadContainer>
+            <ActivityIndicator color={theme.colors.primary} size="large" />
+          </LoadContainer>
+        ) : (
+          <>
+            <ChartContainer>
+              <VictoryPie
+                data={totalByCategories}
+                x="percent"
+                y="total"
+                colorScale={totalByCategories.map(category => category.color)}
+                style={{
+                  labels: {
+                    fontSize: RFValue(18),
+                    fontWeight: 'bold',
+                    fill: theme.colors.shape,
+                  },
+                }}
+                labelRadius={50}
+              />
+            </ChartContainer>
 
-        {totalByCategories.map(item => (
-          <HistoryCard
-            key={item.key}
-            title={item.name}
-            amount={item.totalFormatted}
-            color={item.color}
-          />
-        ))}
+            {totalByCategories.map(item => (
+              <HistoryCard
+                key={item.key}
+                title={item.name}
+                amount={item.totalFormatted}
+                color={item.color}
+              />
+            ))}
+          </>
+        )}
       </Content>
     </Container>
   );
