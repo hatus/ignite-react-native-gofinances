@@ -8,7 +8,10 @@ import {
   Title,
   SignTitle,
   Footer,
+  FooterWrapper,
 } from './styles';
+
+import { SignInSocialButton } from '../../components/SignInSocialButton';
 
 import AppleSvg from '../../assets/images/apple.svg';
 import GoogleSvg from '../../assets/images/google.svg';
@@ -28,7 +31,13 @@ export const SignIn: React.FC = () => {
 
         <SignTitle>Faça seu login com{'\n'}uma das contas abaixo</SignTitle>
       </Header>
-      <Footer></Footer>
+
+      <Footer>
+        <FooterWrapper>
+          <SignInSocialButton title="Entrar com Google" svg={GoogleSvg} />
+          <SignInSocialButton title="Entrar com Apple" svg={AppleSvg} />
+        </FooterWrapper>
+      </Footer>
     </Container>
   );
 };
