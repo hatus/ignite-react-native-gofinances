@@ -16,8 +16,12 @@ import { SignInSocialButton } from '../../components/SignInSocialButton';
 import AppleSvg from '../../assets/images/apple.svg';
 import GoogleSvg from '../../assets/images/google.svg';
 import LogoSvg from '../../assets/images/logo.svg';
+import { useAuth } from '../../hooks/auth';
 
 export const SignIn: React.FC = () => {
+  const { user } = useAuth();
+  console.log(user.name);
+
   return (
     <Container>
       <Header>
