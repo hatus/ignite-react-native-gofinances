@@ -26,6 +26,10 @@ interface AuthorizationResponse {
   type: string;
 }
 
+// variaveis de ambiente
+const { CLIENT_ID } = process.env;
+const { REDIRECT_URI } = process.env;
+
 // criando o contexto com objeto (vazio) do tipo IAuthContextData
 const AuthContext = createContext({} as IAuthContextData);
 
@@ -34,9 +38,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signInWithGoogle = async () => {
     try {
-      const CLIENT_ID =
-        '328085838438-qe0nb7ohop6mf7qpfekuva11oas9nd7v.apps.googleusercontent.com';
-      const REDIRECT_URI = 'https://auth.expo.io/@hatusn/gofinances';
       const RESPONSE_TYPE = 'token';
       // encodeURI serve para transformar o espaço em branco em um formato de URI
       const SCOPE = encodeURI('profile email');
