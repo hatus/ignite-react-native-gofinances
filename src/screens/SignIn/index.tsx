@@ -20,14 +20,23 @@ import LogoSvg from '../../assets/images/logo.svg';
 import { useAuth } from '../../hooks/auth';
 
 export const SignIn: React.FC = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, signInWithApple } = useAuth();
 
   const handleSignInWithGoogle = async () => {
     try {
       await signInWithGoogle();
     } catch (error) {
       console.log(error);
-      Alert.alert('Não foi possível conectar a conta google.');
+      Alert.alert('Não foi possível conectar a conta Google.');
+    }
+  };
+
+  const handleSignInWithApple = async () => {
+    try {
+      await signInWithApple();
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Não foi possível conectar a conta Apple.');
     }
   };
 
@@ -52,7 +61,12 @@ export const SignIn: React.FC = () => {
             svg={GoogleSvg}
             onPress={handleSignInWithGoogle}
           />
-          <SignInSocialButton title="Entrar com Apple" svg={AppleSvg} />
+
+          <SignInSocialButton
+            title="Entrar com Apple"
+            svg={AppleSvg}
+            onPress={handleSignInWithApple}
+          />
         </FooterWrapper>
       </Footer>
     </Container>
