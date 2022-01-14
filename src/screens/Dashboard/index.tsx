@@ -152,13 +152,10 @@ export const Dashboard: React.FC = () => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    (async () => await loadTransactions())();
-  }, []);
-
   useFocusEffect(
     useCallback(() => {
-      (async () => loadTransactions())();
+      // (async () => loadTransactions())();
+      (async () => await AsyncStorage.removeItem(dataKey))();
     }, []),
   );
 
