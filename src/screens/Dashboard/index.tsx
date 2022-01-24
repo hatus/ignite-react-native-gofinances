@@ -9,6 +9,7 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from '../../components/TransactionCard';
+import { useAuth } from '../../hooks/auth';
 import { dataKey } from '../Register';
 
 import {
@@ -50,6 +51,7 @@ export const Dashboard: React.FC = () => {
   const [highlightData, setHighlightData] = useState<HighlightData>(
     {} as HighlightData,
   );
+  const { user, signOut } = useAuth();
 
   const theme = useTheme();
 
@@ -172,17 +174,17 @@ export const Dashboard: React.FC = () => {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: 'https://avatars.githubusercontent.com/u/167095',
+                    uri: user.photo,
                   }}
                 />
 
                 <User>
                   <UserGreeting>Olá, </UserGreeting>
-                  <UserName>Hatus</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
 
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={() => signOut()}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Alert } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { useTheme } from 'styled-components';
 
 import {
   Container,
@@ -20,23 +21,31 @@ import LogoSvg from '../../assets/images/logo.svg';
 import { useAuth } from '../../hooks/auth';
 
 export const SignIn: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { signInWithGoogle, signInWithApple } = useAuth();
+  const theme = useTheme();
 
   const handleSignInWithGoogle = async () => {
     try {
-      await signInWithGoogle();
+      setIsLoading(true);
+      return await signInWithGoogle(); // return para não da erro de performance
     } catch (error) {
       console.log(error);
       Alert.alert('Não foi possível conectar a conta Google.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSignInWithApple = async () => {
     try {
-      await signInWithApple();
+      setIsLoading(true);
+      return await signInWithApple(); // return para não da erro de performance
     } catch (error) {
       console.log(error);
       Alert.alert('Não foi possível conectar a conta Apple.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,6 +77,14 @@ export const SignIn: React.FC = () => {
             onPress={handleSignInWithApple}
           />
         </FooterWrapper>
+
+        {isLoading && (
+          <ActivityIndicator
+            color={theme.colors.shape}
+            size="large"
+            style={{ marginTop: 18 }}
+          />
+        )}
       </Footer>
     </Container>
   );
