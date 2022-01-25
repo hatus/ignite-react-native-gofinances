@@ -10,7 +10,6 @@ import {
   TransactionCardProps,
 } from '../../components/TransactionCard';
 import { useAuth } from '../../hooks/auth';
-import { dataKey } from '../Register';
 
 import {
   Container,
@@ -60,11 +59,19 @@ export const Dashboard: React.FC = () => {
     collection: DataListProps[],
     type: 'positive' | 'negative',
   ) => {
+    const collectionFilttered = collection.filter(
+      transaction => transaction.type === type,
+    );
+
+    if (collectionFilttered.length === 0) {
+      return 0;
+    }
+
     const lastTransaction = Math.max.apply(
       Math,
-      collection
-        .filter(transaction => transaction.type === type)
-        .map(transaction => new Date(transaction.date).getTime()),
+      collectionFilttered.map(transaction =>
+        new Date(transaction.date).getTime(),
+      ),
     );
 
     // formata a data para pt-BR: dd de MMMMM
@@ -75,6 +82,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const loadTransactions = async () => {
+    const dataKey = `@gofinances:transactions:${user.id}`;
     // obtem o json do AS
     const response = await AsyncStorage.getItem(dataKey);
     // transforma json para Object
@@ -123,7 +131,10 @@ export const Dashboard: React.FC = () => {
       transactions,
       'negative',
     );
-    const totalInterval = `01 a ${lastTransactionExpensives}`;
+    const totalInterval =
+      lastTransactionExpensives === 0
+        ? 'Não há transações'
+        : `01 a ${lastTransactionExpensives}`;
 
     const total = entriesTotal - expensiveTotal;
 
@@ -133,14 +144,20 @@ export const Dashboard: React.FC = () => {
           currency: 'BRL',
           style: 'currency',
         }),
-        lastTransaction: `Última entrada dia ${lastTransactionEntries}`,
+        lastTransaction:
+          lastTransactionEntries === 0
+            ? 'Não há transações'
+            : `Última entrada dia ${lastTransactionEntries}`,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString('pt-BR', {
           currency: 'BRL',
           style: 'currency',
         }),
-        lastTransaction: `Última entrada dia ${lastTransactionExpensives}`,
+        lastTransaction:
+          lastTransactionExpensives === 0
+            ? 'Não há transações'
+            : `Última entrada dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
@@ -157,7 +174,8 @@ export const Dashboard: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       (async () => loadTransactions())();
-      // (async () => await AsyncStorage.removeItem(dataKey))();
+      // (async () =>
+      //   await AsyncStorage.removeItem(`@gofinances:transactions:${user.id}`))();
     }, []),
   );
 

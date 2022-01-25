@@ -6,12 +6,12 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { addMonths, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { useAuth } from '../../hooks/auth';
 import { useTheme } from 'styled-components/native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { HistoryCard } from '../../components/HistoryCard';
-import { dataKey } from '../Register';
 import { DataListProps } from '../Dashboard';
 import { categories } from '../../utils/categories';
 
@@ -45,6 +45,7 @@ export const Resume: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const theme = useTheme();
+  const { user } = useAuth();
 
   const handleChangeDate = (action: 'next' | 'prev') => {
     if (action === 'next') {
@@ -56,6 +57,7 @@ export const Resume: React.FC = () => {
 
   const loadData = async () => {
     setIsLoading(true);
+    const dataKey = `@gofinances:transactions:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const transactions: DataListProps[] = response ? JSON.parse(response) : [];
 
